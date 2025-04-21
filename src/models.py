@@ -24,6 +24,12 @@ class User(db.Model):
 
     favorites = relationship('Favorites', back_populates='user', lazy='joined')
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.username
+        }
+
 
 class Planets(db.Model):
     __tablename__ = "planets"
@@ -43,7 +49,7 @@ class Planets(db.Model):
         'Favorites', back_populates='planet', lazy='joined')
 
     def serialize(self):
-        # favorites = list(map(lambda f: f.serialize(), self.favorites))
+
         return {
             "id": self.id,
             "name": self.name,
@@ -55,7 +61,7 @@ class Planets(db.Model):
             "climate": self.climate,
             "terrain": self.terrain,
             "surface_water": self.surface_water,
-            # "favorites": favorites,
+
         }
 
 
@@ -80,7 +86,7 @@ class Vehicles(db.Model):
         'Favorites', back_populates='vehicle', lazy='joined')
 
     def serialize(self):
-        # favorites = list(map(lambda f: f.serialize(), self.favorites))
+
         return {
             "id": self.id,
             "name": self.name,
@@ -94,7 +100,6 @@ class Vehicles(db.Model):
             "cargo_capacity": self.cargo_capacity,
             "consumables": self.consumables,
             "url": self.url,
-            # "favorites": favorites,
         }
 
 
@@ -117,7 +122,7 @@ class People(db.Model):
         'Favorites', back_populates='person', lazy='joined')
 
     def serialize(self):
-        # favorites = list(map(lambda f: f.serialize(), self.favorites))
+
         return {
             "id": self.id,
             "name": self.name,
@@ -130,7 +135,6 @@ class People(db.Model):
             "skin_color": self.skin_color,
             "homeworld": self.homeworld,
             "url": self.url,
-            # "favorites": favorites,
         }
 
 

@@ -76,6 +76,14 @@ def handle_get_people():
     return jsonify(people)
 
 
+@app.route('/users', methods=["GET"])
+def handle_get_users():
+    users = User.query.all()
+    users = list(map(lambda u: u.serialize(), users))
+
+    return jsonify(users)
+
+
 @app.route('/favorite/<item_type>/<int:item_id>', methods=["POST"])
 def handle_post_favorite(item_type, item_id):
     new_favorite = Favorites()
@@ -106,6 +114,43 @@ def handle_get_favorites(userId):
     user_favorites = Favorites.query.filter_by(user_id=userId).all()
     user_favorites = list(map(lambda fav: fav.serialize(), user_favorites))
     return jsonify(user_favorites), 200
+
+
+@app.route('/favorite/<item_type>/<int:item_id>', methods=["DELETE"])
+def handle_delete_favorite(item_type, item_id):
+    favorite = None
+    if item_type == "people":
+        favorite = Favorites.query.filter_by(
+            user_id=1,
+            type=Favorite_Types.people,
+            people_id=item_id
+        ).first()
+
+    elif item_type == "planets":
+        favorite = Favorites.query.filter_by(
+            user_id=1,
+            type=Favorite_Types.planets,
+            planet_id=item_id
+        ).first()
+
+    elif item_type == "vehicles":
+        favorite = Favorites.query.filter_by(
+            user_id=1,
+            type=Favorite_Types.vehicles,
+            vehicle_id=item_id
+        ).first()
+    else:
+        return jsonify({"msg": "Wrong favorite type"}), 400
+
+    if not favorite:
+        return jsonify({"msg": "Favorite not found"}), 404
+
+    db.session.delete(favorite)
+    db.session.commit()
+
+    return jsonify({
+        "msg": "Deleted successfully",
+    }), 200
 
 
 # this only runs if `$ python src/app.py` is executed
